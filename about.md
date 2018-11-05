@@ -8,4 +8,4 @@ Current active USMC intelligence officer using this space as a place to write do
 
 ### Contact me
 
-[slaughter.marc@gmail.com](mailto:slaughter.marc@gmail.com)
+[@marcslaughter](https://twitter.com/marcslaughter)
