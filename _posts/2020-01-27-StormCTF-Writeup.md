@@ -21,7 +21,7 @@ The first step in solving this puzzle is to spend about 2 hours trying to manipu
 
 Ok, there's a pastebin link somewhere in this mess.  I opened the imagefile in notepad and Ctrl-F'd "paste" and found it.
 
-![TextLogo](https://github.com/marcslaughter/marcslaughter.github.io/blob/master/images/textlogo.PNG)
+![TextLogo](https://raw.githubusercontent.com/marcslaughter/marcslaughter.github.io/master/images/textlogo.PNG)
 
 Work, where I'm writing this, uderstandably blocks pastebin.  Fortunately for you, I was working on this CTF last week at work too, so I asked someone else to go to the link and email me the contents.
 
@@ -29,5 +29,5 @@ From here it's just a question of a combination of trial-and-error and recognizi
 
 [And here it is...](https://gchq.github.io/CyberChef/#recipe=From_Base64('A-Za-z0-9%2B/%3D',true)From_Hex('Auto')Reverse('Character')From_Base64('A-Za-z0-9%2B/%3D',true)From_Hex('Auto')From_Base64('A-Za-z0-9%2B/%3D',true)&input=TTJRMU1UTXlOR1F6TnpVeE16STBaRE0zTkRVMU5EUmxNemMxT1RaaE5HVXpOell6TkRRMFpUTTNORFUwTnpSbE16YzBOVFprTkdVek56UTFOVFEwWlRNM05HUTBORFJsTXpjMU5UUTNOR1V6TnpRMU16STBaVE0zTm1JMU5EUmxNemMwT1Raa05HVXpOelExTkRjMFpUTTNOak0wTkRSbE16YzBPVFUwTkdVek56UXhOMkUwWkRNM05URTBOelJsTXpjME5UTXlOR1V6TnpVeE5EYzBaVE0zTkRrME5EUmxNemMxT1RRME5HVXpOell6TkRRMFpUTTNORGsxTkRSbE16YzFPVFEwTkdVek56VTFORGMwWlRNM05URTJaRFJsTXpjMllqVTBOR1V6TnpSa05tUTBaVE0zTlRrMU5EUmxNemMyTXpVME5HVXpOelExTlRjMFpUTTNOVGswTkRSbE16YzBPVFUwTkdVek56VTFOVFEwWlRNM05UazBOelJsTXpjMU1UWmtOR1V6TnpZM05tRTBaVE0zTkRVek1qUmxNemMxTVRRM05HVXpOell6TkRRMFpUTTNOVFUwTnpSbE16YzFOVFUwTkdVek56UTVOVFEwWlRNM05qYzJZVFJsTXpjME9UVTBOR1V6TnpRMU5tUTBaVE0zTlRrME56UmxNemMyTXpkaE5HVXpOelppTkRRMFpUTTNOVEUwTkRSbE16YzFNVFEzTkdVek56WmlOMkUwWlRNM05qYzNZVFJrTXpjME9UZGhOR1F6TnpRNU5tRTBaVE0zTlRFM1lUUmxNemMyTnpaaE5HVXpOelE1TjJFMFpETTNOVFUxTkRSbE16YzJNemRoTkdRek56UTFOVGMwWlRNM05UVTBORFJsTXpjMU9UVTBOR1V6TnpVeE5EUTBaVE0zTkRVM1lUUmtNemMxTVRaa05HVXpOelJrTm1FMFpUTTNOVGszWVRSbE16YzBPVFUwTkdVek56UmtOMkUwWkRNM05UVTFORFJs)
 
-![SOLUTION](https://github.com/marcslaughter/marcslaughter.github.io/blob/master/images/Solution.PNG)
+![SOLUTION](https://raw.githubusercontent.com/marcslaughter/marcslaughter.github.io/master/images/Solution.PNG)
 
