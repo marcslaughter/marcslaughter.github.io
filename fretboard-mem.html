@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guitar Fretboard Trainer</title>
+    <style>
+        :root {
+            --background-color: #2c3e50;
+            --text-color: #ecf0f1;
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --disabled-color: #7f8c8d;
+            --accent-color: #e74c3c;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #34495e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        .note-display {
+            font-size: 10rem;
+            font-weight: bold;
+            margin: 20px 0;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            transition: transform 0.2s ease;
+        }
+        .note-display.beat {
+            transform: scale(1.1);
+            color: var(--primary-color);
+        }
+        .note-list {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .note-item {
+            font-size: 1.2rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background-color: var(--secondary-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .note-item.used {
+            background-color: transparent;
+            color: var(--disabled-color);
+            text-decoration: line-through;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        button.secondary {
+             background-color: var(--accent-color);
+        }
+         button.secondary:hover {
+             background-color: #c0392b;
+        }
+        .controls {
+            margin-top: 30px;
+            border-top: 1px solid var(--disabled-color);
+            padding-top: 20px;
+            display: grid;
+            gap: 20px;
+        }
+        .control-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2c3e50;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+        /* Simple Toggle Switch CSS */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--disabled-color);
+            transition: .4s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        input:disabled + .slider {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+        .hidden {
+            display: none;
+        }
+        .tempo-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tempo-control input[type="range"] {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Fretboard Trainer</h1>
+    <div id="noteDisplay" class="note-display">--</div>
+    <div id="noteListContainer" class="note-list"></div>
+    <div class="button-group">
+        <button id="nextNoteBtn">Next Note</button>
+        <button id="metronomeBtn" class="hidden">Start Metronome</button>
+        <button id="autoModeBtn" class="hidden">Start</button>
+    </div>
+    <hr>
+    <div class="controls">
+        <div class="control-group">
+            <label for="chromaticToggle">Include Sharps/Flats (12 Notes)</label>
+            <label class="switch">
+                <input type="checkbox" id="chromaticToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="control-group">
+            <label for="metronomeToggle">Enable Metronome</label>
+            <label class="switch">
+                <input type="checkbox" id="metronomeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div id="metronomeControls" class="control-group hidden">
+            <label for="tempoSlider">Tempo</label>
+            <div class="tempo-control">
+                <input type="range" id="tempoSlider" min="40" max="200" value="100">
+                <span id="tempoValue">100 BPM</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="autoModeToggle">Enable Auto-Switch</label>
+            <label class="switch">
+                <input type="checkbox" id="autoModeToggle" disabled>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM ELEMENTS ---
+        const noteDisplay = document.getElementById('noteDisplay');
+        const nextNoteBtn = document.getElementById('nextNoteBtn');
+        const metronomeBtn = document.getElementById('metronomeBtn');
+        const autoModeBtn = document.getElementById('autoModeBtn');
+        const chromaticToggle = document.getElementById('chromaticToggle');
+        const metronomeToggle = document.getElementById('metronomeToggle');
+        const autoModeToggle = document.getElementById('autoModeToggle');
+        const noteListContainer = document.getElementById('noteListContainer');
+        const metronomeControls = document.getElementById('metronomeControls');
+        const tempoSlider = document.getElementById('tempoSlider');
+        const tempoValue = document.getElementById('tempoValue');
+
+        // --- STATE VARIABLES ---
+        let notesNatural = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+        let notesChromatic = [
+            ['A'], ['A#', 'Bb'], ['B'], ['C'], ['C#', 'Db'], ['D'],
+            ['D#', 'Eb'], ['E'], ['F'], ['F#', 'Gb'], ['G'], ['G#', 'Ab']
+        ];
+        
+        let currentNotePool = [];
+        let usedNotes = [];
+        let isAutoModeRunning = false;
+        let isMetronomeRunning = false;
+        let tempo = 100;
+        let metronomeInterval = null;
+        let autoModeInterval = null;
+        let beatCount = 0;
+
+        // --- AUDIO CONTEXT for Metronome Sound ---
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+        function playMetronomeClick() {
+            initAudio(); // Ensure context is ready
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.05);
+            
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.05);
+        }
+
+        // --- CORE FUNCTIONS ---
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+        
+        function resetCycle() {
+            usedNotes = [];
+            const useChromatic = chromaticToggle.checked;
+            const sourceNotes = useChromatic ? notesChromatic : notesNatural.map(n => [n]);
+            
+            currentNotePool = [...sourceNotes];
+            shuffle(currentNotePool);
+            
+            updateNoteListUI();
+            displayNextNote();
+        }
+
+        function displayNextNote() {
+            if (currentNotePool.length === 0) {
+                if (!isAutoModeRunning) {
+                    resetCycle();
+                } else {
+                    noteDisplay.textContent = "Done!";
+                    stopAutoMode();
+                }
+                return;
+            }
+            const noteGroup = currentNotePool.pop();
+            const baseNote = noteGroup[0];
+            const displayNote = noteGroup.length > 1 ? noteGroup[Math.floor(Math.random() * 2)] : baseNote;
+            
+            noteDisplay.textContent = displayNote;
+            usedNotes.push(baseNote);
+            updateNoteListUI();
+        }
+
+        function updateNoteListUI() {
+            noteListContainer.innerHTML = '';
+            const sourceNotes = chromaticToggle.checked ? notesChromatic : notesNatural.map(n => [n]);
+            sourceNotes.forEach(noteGroup => {
+                const noteItem = document.createElement('div');
+                noteItem.classList.add('note-item');
+                noteItem.textContent = noteGroup[0];
+                if (usedNotes.includes(noteGroup[0])) {
+                    noteItem.classList.add('used');
+                }
+                noteListContainer.appendChild(noteItem);
+            });
+        }
+        
+        // --- METRONOME & AUTO-MODE FUNCTIONS ---
+
+        function startSimpleMetronome() {
+            if (isMetronomeRunning) return;
+            isMetronomeRunning = true;
+            metronomeBtn.textContent = 'Stop Metronome';
+            metronomeBtn.classList.add('secondary');
+            const beatInterval = 60000 / tempo;
+            metronomeInterval = setInterval(playMetronomeClick, beatInterval);
+        }
+
+        function stopSimpleMetronome() {
+            clearInterval(metronomeInterval);
+            isMetronomeRunning = false;
+            metronomeBtn.textContent = 'Start Metronome';
+            metronomeBtn.classList.remove('secondary');
+        }
+
+        function startAutoMode() {
+            if (isAutoModeRunning) return;
+            isAutoModeRunning = true;
+            autoModeBtn.textContent = 'Stop';
+            autoModeBtn.classList.add('secondary');
+            resetCycle();
+            noteDisplay.textContent = '...';
+            beatCount = 0;
+            const beatInterval = 60000 / tempo;
+
+            autoModeInterval = setInterval(() => {
+                playMetronomeClick();
+                noteDisplay.classList.add('beat');
+                setTimeout(() => noteDisplay.classList.remove('beat'), 100);
+                beatCount++;
+                if (beatCount <= 4) {
+                    noteDisplay.textContent = beatCount;
+                } else {
+                    const exerciseBeat = (beatCount - 5) % 6;
+                    if (exerciseBeat === 0) {
+                        if (currentNotePool.length > 0) {
+                            displayNextNote();
+                        } else {
+                            stopAutoMode();
+                            noteDisplay.textContent = "Done!";
+                        }
+                    }
+                }
+            }, beatInterval);
+        }
+        
+        function stopAutoMode() {
+            clearInterval(autoModeInterval);
+            isAutoModeRunning = false;
+            autoModeBtn.textContent = 'Start';
+            autoModeBtn.classList.remove('secondary');
+        }
+
+        // --- EVENT LISTENERS ---
+
+        nextNoteBtn.addEventListener('click', () => {
+             initAudio();
+             displayNextNote();
+        });
+        
+        chromaticToggle.addEventListener('change', resetCycle);
+
+        metronomeToggle.addEventListener('change', () => {
+            const isEnabled = metronomeToggle.checked;
+            metronomeControls.classList.toggle('hidden', !isEnabled);
+            autoModeToggle.disabled = !isEnabled;
+            
+            // If main metronome toggle is switched off, stop everything.
+            if (!isEnabled) {
+                autoModeToggle.checked = false;
+                autoModeToggle.dispatchEvent(new Event('change'));
+                if (isMetronomeRunning) stopSimpleMetronome();
+                metronomeBtn.classList.add('hidden');
+            } else {
+                 // Show the correct button based on auto-mode state
+                metronomeBtn.classList.toggle('hidden', autoModeToggle.checked);
+            }
+        });
+
+        autoModeToggle.addEventListener('change', () => {
+            const isEnabled = autoModeToggle.checked;
+            // Hide/Show the correct buttons
+            nextNoteBtn.classList.toggle('hidden', isEnabled);
+            autoModeBtn.classList.toggle('hidden', !isEnabled);
+            metronomeBtn.classList.toggle('hidden', isEnabled);
+
+            // If auto-mode is disabled, stop its processes
+            if (!isEnabled && isAutoModeRunning) {
+                stopAutoMode();
+            }
+            // If auto-mode is enabled, stop the simple metronome if it was running
+            if (isEnabled && isMetronomeRunning) {
+                stopSimpleMetronome();
+            }
+        });
+
+        tempoSlider.addEventListener('input', () => {
+            tempo = parseInt(tempoSlider.value, 10);
+            tempoValue.textContent = `${tempo} BPM`;
+            if (isAutoModeRunning) {
+                stopAutoMode();
+                startAutoMode();
+            }
+            if (isMetronomeRunning) {
+                stopSimpleMetronome();
+                startSimpleMetronome();
+            }
+        });
+        
+        metronomeBtn.addEventListener('click', () => {
+             isMetronomeRunning ? stopSimpleMetronome() : startSimpleMetronome();
+        });
+
+        autoModeBtn.addEventListener('click', () => {
+            isAutoModeRunning ? stopAutoMode() : startAutoMode();
+        });
+
+        // --- INITIALIZATION ---
+        resetCycle();
+    });
+</script>
+
+</body>
+</html>
